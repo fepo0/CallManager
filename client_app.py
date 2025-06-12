@@ -1,12 +1,13 @@
 import sys
 import subprocess
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout, QFormLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QVBoxLayout, QFormLayout
 from PyQt5.QtCore import Qt
 
 class ClientApp(QWidget):
     def __init__(self):
         super().__init__()
+
         # Окно
         self.setWindowTitle('Телефонный клиент')
         self.setWindowIcon(QIcon('client_app.ico'))
@@ -40,8 +41,9 @@ class ClientApp(QWidget):
         name = self.name_input.text().strip() or "Неопределенно"
         phone = self.phone_input.text().strip() or "Неопределенно"
 
-        subprocess.Popen([
-            "call_app.exe",
+        subprocess.Popen([  # ПЕРЕД ПУБЛИКАЦИЕЙ ИЗМЕНИТЬ!!!
+            sys.executable,
+            "call_app.py",
             org,
             name,
             phone
