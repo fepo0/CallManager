@@ -4,8 +4,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget,
     QLabel, QPushButton,
     QVBoxLayout, QHBoxLayout,
-    QDesktopWidget, QSpacerItem,
-    QSizePolicy
+    QDesktopWidget, QFrame
 )
 from PyQt5.QtCore import Qt
 from PyQt5 import QtCore
@@ -29,16 +28,19 @@ class CallApp(QWidget):
 
         for label in (self.org_label, self.name_label, self.phone_label):
             label.setFont(font)
-            label.setStyleSheet("color: #79443B; margin: 5px;")
+            label.setStyleSheet("color: #472A3F; margin: 5px; ")
+            label.setAlignment(Qt.AlignCenter)
 
         # Кнопки
+        font_button = QFont("Times New Roman", 12, QFont.Bold)
+
         self.reject_button = QPushButton()  # Отклонить
         self.reject_button.setIcon(QIcon("image/reject.png"))
         self.reject_button.setIconSize(QtCore.QSize(60, 60))
         self.reject_button.clicked.connect(self.reject_call)
 
         self.redirect_button = QPushButton("Перенаправить\nзвонок")
-        self.redirect_button.setFixedSize(100, 70)
+        self.redirect_button.setFixedSize(160, 80)
         self.redirect_button.clicked.connect(self.redirect_call)
 
         self.accept_button = QPushButton()  # Принять
@@ -66,26 +68,46 @@ class CallApp(QWidget):
         self.delete_data_button.setIconSize(QtCore.QSize(30, 30))
         self.delete_data_button.clicked.connect(self.delete_data)
 
+        button = self.redirect_button
+        button.setFont(font_button)
+        button.setStyleSheet("color: #472A3F; margin: 5px; ")
+
         # Размещение кнопок
-        bottom_buttons = QHBoxLayout()
-        bottom_buttons.addStretch()
-        bottom_buttons.addWidget(self.reject_button)  # Отклонить
-        bottom_buttons.addWidget(self.redirect_button)
-        bottom_buttons.addWidget(self.accept_button)  # Принять
-        bottom_buttons.addStretch()
+        bottom_row = QHBoxLayout()
+        bottom_row.setAlignment(Qt.AlignCenter)
+        bottom_row.addWidget(self.reject_button)  # Отклонить
+        bottom_row.addSpacing(10)
+        bottom_row.addWidget(self.redirect_button)
+        bottom_row.addSpacing(10)
+        bottom_row.addWidget(self.accept_button)  # Принять
+        bottom_row.addStretch()
 
-        # Текстовый блок
-        main_text_layout = QVBoxLayout()
-        main_text_layout.setAlignment(Qt.AlignTop)
-        main_text_layout.addWidget(self.org_label)
-        main_text_layout.addWidget(self.name_label)
-        main_text_layout.addWidget(self.phone_label)
-        main_text_layout.addSpacerItem(QSpacerItem(10, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
-        main_text_layout.addLayout(bottom_buttons)
+        # Левая часть
+        left_inner = QVBoxLayout()
+        left_inner.setAlignment(Qt.AlignCenter)
+        left_inner.addWidget(self.org_label)
+        left_inner.addWidget(self.name_label)
+        left_inner.addWidget(self.phone_label)
+        left_inner.addSpacing(100)
+        left_inner.addLayout(bottom_row)
 
-        # Панель справа
+        left_widget = QWidget(self)
+        left_widget.setLayout(left_inner)
+
+        left_wrapper = QVBoxLayout()
+        left_wrapper.addStretch()
+        left_wrapper.addWidget(left_widget, alignment=Qt.AlignCenter)
+        left_wrapper.addStretch()
+
+        # Полоска
+        vertical_line = QFrame()
+        vertical_line.setFrameShape(QFrame.VLine)
+        vertical_line.setFrameShadow(QFrame.Sunken)
+        vertical_line.setLineWidth(1)
+
+        # Правая панель
         right_panel = QVBoxLayout()
-        right_panel.setAlignment(Qt.AlignTop)
+        right_panel.setAlignment(Qt.AlignCenter)
         right_panel.addWidget(self.add_data_button)
         right_panel.addWidget(self.edit_data_button)
         right_panel.addWidget(self.commentary_client_button)
@@ -94,7 +116,8 @@ class CallApp(QWidget):
 
         # Размещение
         main_layout = QHBoxLayout()
-        main_layout.addLayout(main_text_layout, stretch=4)
+        main_layout.addLayout(left_wrapper, stretch=4)
+        main_layout.addWidget(vertical_line)
         main_layout.addLayout(right_panel, stretch=1)
 
         self.setLayout(main_layout)
