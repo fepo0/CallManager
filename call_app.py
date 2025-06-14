@@ -1,4 +1,13 @@
 import sys
+import json
+import os
+import accept_call
+import add_data
+import commentary_client
+import delete_data
+import edit_data
+import redirect_call
+import reject_call
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import (
     QApplication, QWidget,
@@ -10,8 +19,22 @@ from PyQt5.QtCore import Qt
 from PyQt5 import QtCore
 
 class CallApp(QWidget):
-    def __init__(self, org, name, phone):
+    def __init__(self, json_path):
         super().__init__()
+
+        if os.path.exists(json_path):
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        else:
+            data = {
+                "org": "Неопределенно",
+                "name": "Неопределенно",
+                "phone": "Неопределенно"
+            }
+
+        org = data.get("org", "Неопределенно")
+        name = data.get("name", "Неопределенно")
+        phone = data.get("phone", "Неопределенно")
 
         # Окно
         self.setWindowTitle("Входящий вызов")
@@ -129,30 +152,37 @@ class CallApp(QWidget):
         self.move(qr.topLeft())
 
     def reject_call(self):
+        reject_call
         print("Вызов отклонен")
         self.close()
 
     def redirect_call(self):
+        redirect_call
         print("Звонок перенаправлен")
         self.close()
 
     def accept_call(self):
+        accept_call
         print("Вызов принят")
         self.close()
 
     def add_data(self):
+        add_data
         print("Добавить контакт")
         self.close()
 
     def edit_data(self):
+        edit_data
         print("Редактировать клиента")
         self.close()
 
     def commentary_client(self):
+        commentary_client
         print("Комментарий клиента")
         self.close()
 
     def delete_data(self):
+        delete_data
         print("Удаление клиента")
         self.close()
 
@@ -160,10 +190,8 @@ class CallApp(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    org = sys.argv[1] if len(sys.argv) > 1 else "Неопределенно"
-    name = sys.argv[2] if len(sys.argv) > 2 else "Неопределенно"
-    phone = sys.argv[3] if len(sys.argv) > 3 else "Неизвестно"
+    json_path = sys.argv[1] if len(sys.argv) > 1 else ""
 
-    window = CallApp(org, name, phone)
+    window = CallApp(json_path)
     window.show()
     sys.exit(app.exec_())

@@ -1,5 +1,5 @@
 import sys
-import subprocess
+import requests
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QVBoxLayout, QFormLayout
 from PyQt5.QtCore import Qt
@@ -20,7 +20,7 @@ class ClientApp(QWidget):
 
         # Кнопка
         self.call_button = QPushButton("Позвонить")
-        self.call_button.clicked.connect(self.start_call_app)
+        self.call_button.clicked.connect(self.send_data)
 
         # Метки
         form_layout = QFormLayout()
@@ -36,18 +36,19 @@ class ClientApp(QWidget):
 
         self.setLayout(layout)
 
-    def start_call_app(self):
-        org = self.org_input.text().strip() or "Неопределенно"
-        name = self.name_input.text().strip() or "Неопределенно"
-        phone = self.phone_input.text().strip() or "Неопределенно"
+    def send_data(self):
+        data = {
+            "org": self.org_input.text().strip() or "Неопределенно",
+            "name": self.name_input.text().strip() or "Неопределенно",
+            "phone": self.phone_input.text().strip() or "Неопределенно"
+        }
 
-        subprocess.Popen([  # ПЕРЕД ПУБЛИКАЦИЕЙ ИЗМЕНИТЬ!!!
-            sys.executable,
-            "call_app.py",
-            org,
-            name,
-            phone
-        ])
+        try:
+            response = requests.post('http://127.0.0.1:5000/incoming_call', json=data)
+            print("Ответ сервера: ", response.json())
+        except Exception as e:
+            print("Ошибка отправки: ", e)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
