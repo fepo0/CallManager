@@ -1,19 +1,15 @@
 import sys
 import json
 import os
-import accept_call
-import add_data
-import commentary_client
-import delete_data
-import edit_data
-import redirect_call
-import reject_call
+from handlers.add_data import handle_add_user
+from handlers import accept_call, commentary_client, delete_data, edit_data, redirect_call, reject_call
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import (
     QApplication, QWidget,
     QLabel, QPushButton,
     QVBoxLayout, QHBoxLayout,
-    QDesktopWidget, QFrame
+    QDesktopWidget, QFrame,
+    QMessageBox
 )
 from PyQt5.QtCore import Qt
 from PyQt5 import QtCore
@@ -167,9 +163,11 @@ class CallApp(QWidget):
         self.close()
 
     def add_data(self):
-        add_data
-        print("Добавить контакт")
-        self.close()
+        phone = self.phone_label.text().strip()
+        if phone:
+            handle_add_user(phone)
+        else:
+            QMessageBox.warning(self, "Ошибка", "Введите номер телеыона.")
 
     def edit_data(self):
         edit_data
