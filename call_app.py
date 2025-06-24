@@ -2,6 +2,7 @@ import sys
 import json
 import os
 from handlers.add_data import handle_add_user
+from handlers.edit_data import handle_edit_user
 from handlers import accept_call, commentary_client, delete_data, edit_data, redirect_call, reject_call
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import (
@@ -170,9 +171,11 @@ class CallApp(QWidget):
             QMessageBox.warning(self, "Ошибка", "Введите номер телеыона.")
 
     def edit_data(self):
-        edit_data
-        print("Редактировать клиента")
-        self.close()
+        phone = self.phone_label.text().strip()
+        if phone:
+            handle_edit_user(phone)
+        else:
+            QMessageBox.warning(self, "Ошибка", "Введите номер телефона.")
 
     def commentary_client(self):
         commentary_client

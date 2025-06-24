@@ -3,7 +3,7 @@ import requests
 import json
 import time
 
-AMI_HOST = '172.18.18.126'
+AMI_HOST = '172.18.18.131'
 AMI_PORT = 5038
 AMI_USER = 'CallManager'
 AMI_PASS = '12345'
