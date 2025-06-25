@@ -3,7 +3,8 @@ import json
 import os
 from handlers.add_data import handle_add_user
 from handlers.edit_data import handle_edit_user
-from handlers import accept_call, commentary_client, delete_data, edit_data, redirect_call, reject_call
+from handlers.commentary_client import show_comment_dialog
+from handlers import accept_call, delete_data, redirect_call, reject_call
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtWidgets import (
     QApplication, QWidget,
@@ -18,6 +19,9 @@ from PyQt5 import QtCore
 class CallApp(QWidget):
     def __init__(self, json_path):
         super().__init__()
+        self.org = ""
+        self.name = ""
+        self.phone = ""
 
         if os.path.exists(json_path):
             with open(json_path, 'r', encoding='utf-8') as f:
@@ -166,21 +170,31 @@ class CallApp(QWidget):
     def add_data(self):
         phone = self.phone_label.text().strip()
         if phone:
-            handle_add_user(phone)
+            result = handle_add_user(phone)
+            if result:
+                self.org_label.setText(result["org"])
+                self.name_label.setText(result["name"])
+                self.phone_label.setText(result["phone"])
         else:
             QMessageBox.warning(self, "Ошибка", "Введите номер телеыона.")
 
     def edit_data(self):
         phone = self.phone_label.text().strip()
         if phone:
-            handle_edit_user(phone)
+            result = handle_edit_user(phone)
+            if result:
+                self.org_label.setText(result["org"])
+                self.name_label.setText(result["name"])
+                self.phone_label.setText(result["phone"])
         else:
             QMessageBox.warning(self, "Ошибка", "Введите номер телефона.")
 
     def commentary_client(self):
-        commentary_client
-        print("Комментарий клиента")
-        self.close()
+        phone = self.phone_label.text().strip()
+        if phone in ["", "Неопределенно"]:
+            QMessageBox.warning(self, "Ошибка", "Номер телефона отсутствует.")
+            return
+        show_comment_dialog(self.org_label.text(), self.name_label.text(), phone)
 
     def delete_data(self):
         delete_data

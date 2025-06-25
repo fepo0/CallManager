@@ -34,6 +34,7 @@ class EditUserDialog(QDialog):
         self.setWindowTitle("Редактировать клиента")
         self.setFixedSize(300, 200)
         self.old_data = old_data
+        self.new_data = None
         self.setup_ui()
 
     def setup_ui(self):
@@ -77,17 +78,19 @@ class EditUserDialog(QDialog):
                 verify=False
             )
             response.raise_for_status()
+            self.new_data = new_data
             self.show_timed_message("Клиент успешно изменен", QMessageBox.Information)
-            self.accept()
+            QTimer.singleShot(5000, self.accept)
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"Не удалось отредактировать клиента: {e}")
 
     def show_timed_message(self, text, icon):
-        msg = QMessageBox()
+        msg = QMessageBox(self)
         msg.setWindowTitle("Уведомление")
         msg.setText(text)
         msg.setIcon(icon)
         msg.setStandardButtons(QMessageBox.NoButton)
+        msg.setModal(False)
         msg.show()
         QTimer.singleShot(5000, msg.close)
 
@@ -104,6 +107,9 @@ def handle_edit_user(phone):
         msg.show()
         QTimer.singleShot(5000, msg.close)
         handle_edit_user.msg = msg
+        return None
     else:
         dialog = EditUserDialog(old_data=data)
-        dialog.exec_()
+        if dialog.exec_() == QDialog.Accepted and dialog.new_data:
+            return dialog.new_data
+        return None

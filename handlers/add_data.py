@@ -1,11 +1,8 @@
 import requests
-from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import (
-    QWidget, QFormLayout,
-    QLineEdit, QPushButton,
-    QVBoxLayout, QMessageBox,
-    QDialog, QApplication,
-    QLabel
+    QFormLayout, QLineEdit,
+    QPushButton, QVBoxLayout,
+    QMessageBox, QDialog
 )
 from PyQt5.QtCore import QTimer
 from requests_ntlm import HttpNtlmAuth
@@ -36,6 +33,7 @@ class AddUserDialog(QDialog):
         super().__init__()
         self.setWindowTitle("Добавление пользователя")
         self.phone = phone
+        self.new_data = None
         self.setup_ui()
 
     def setup_ui(self):
@@ -81,8 +79,13 @@ class AddUserDialog(QDialog):
                 verify=False
             )
             response.raise_for_status()
+            self.new_data = {
+                "org": org,
+                "name": name,
+                "phone": phone
+            }
             self.show_timed_message("Пользователь успешно добавлен", QMessageBox.Information)
-            self.accept()
+            QTimer.singleShot(5000, self.accept)
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"Hе удалось добавить клиента: {e}")
 
@@ -92,8 +95,9 @@ class AddUserDialog(QDialog):
         msg.setText(text)
         msg.setIcon(icon)
         msg.setStandardButtons(QMessageBox.NoButton)
+        msg.setModal(False)
         msg.show()
-        QTimer.singleShot(5000, msg.close)
+        QTimer.singleShot(5000, msg.accept)
 
 def handle_add_user(phone):
     if check_user_exists(phone):
@@ -106,6 +110,9 @@ def handle_add_user(phone):
         msg.show()
         QTimer.singleShot(5000, msg.close)
         handle_add_user.msg = msg
+        return None
     else:
         dialog = AddUserDialog(phone)
-        dialog.exec_()
+        if dialog.exec_() == QDialog.Accepted and dialog.new_data:
+            return dialog.new_data
+        return None
