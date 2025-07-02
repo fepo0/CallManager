@@ -41,6 +41,7 @@ def delete_client(phone, parent_widget=None):
             _show_message("Клиент успешно удален.", QMessageBox.Information, parent_widget)
         else:
             _show_message(f"Ошибка: {result.get('message', 'Неизвестная ошибка')}", QMessageBox.Information, parent_widget)
+            print(f"Ошибка: {result.get('message', 'Неизвестная ошибка')}")
 
     except Exception as e:
         _show_message(f"Ошибка соединения: {str(e)}", QMessageBox.Critical, parent_widget)
